@@ -1,4 +1,10 @@
-#include <algorithm>
+/**
+ * topurl
+ *
+ * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
+ * SPDX-License-Identifier: MIT
+ * Copyright (c) 2019 Dillon <https://dillonzq.com>.
+ */
 
 #include "topurl/map.h"
 

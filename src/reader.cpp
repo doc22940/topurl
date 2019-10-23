@@ -1,3 +1,11 @@
+/**
+ * topurl
+ *
+ * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
+ * SPDX-License-Identifier: MIT
+ * Copyright (c) 2019 Dillon <https://dillonzq.com>.
+ */
+
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
