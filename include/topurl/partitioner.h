@@ -6,6 +6,8 @@
  * Copyright (c) 2019 Dillon <https://dillonzq.com>.
  */
 
+#pragma once
+
 #include <vector>
 
 #include "define.h"

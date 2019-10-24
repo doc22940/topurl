@@ -6,6 +6,8 @@
  * Copyright (c) 2019 Dillon <https://dillonzq.com>.
  */
 
+#pragma once
+
 #include <atomic>
 #include <condition_variable>
 #include <deque>
