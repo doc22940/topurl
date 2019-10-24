@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
     reader.add_file(URL_FILE);
 
-    std::vector<int64_t> fds;
+    std::vector<std::int64_t> fds;
     std::vector<std::string> temp_files;
     for (int i = 0; i < TEMPFILE_NUM; i++) {
         std::string temp_file = "temp/" + URL_FILE + "_" + std::to_string(i);
