@@ -1,5 +1,5 @@
 /**
- * topurl
+ * topurl - topurl_main.cpp
  *
  * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
  * SPDX-License-Identifier: MIT
@@ -22,6 +22,7 @@
 USE_NAMESPACE_TOPURL
 
 int main(int argc, char **argv) {
+    // init args
     init_arg(argc, argv);
 
     Buffer buffer(BLOCK_SIZE + MAX_URL_LEN);
@@ -61,6 +62,7 @@ int main(int argc, char **argv) {
 
     for (int i = 0; i < WORKER_NUM; i++) {
         partition_threads[i].join();
+        free(workers[i]);
     }
     for (int i = 0; i < TEMPFILE_NUM; i++) {
         if (close(fds[i]) == -1) {
@@ -71,7 +73,6 @@ int main(int argc, char **argv) {
     for (int i = 0; i < TEMPFILE_NUM; i++) {
         reader.add_file(temp_files[i]);
     }
-    temp_files.clear();
 
     std::vector<std::thread> count_threads;
     count_threads.reserve(WORKER_NUM);
@@ -83,15 +84,22 @@ int main(int argc, char **argv) {
         count_threads.emplace_back(std::move(std::thread(work_thread, workers[i], to_works, from_work, stop)));
     }
 
-    while (reader.read_file() == 1) {
+    while (reader.read_file()) {
         map->reduce();
     }
 
+    // clear workers and threads
     for (int i = 0; i < WORKER_NUM; i++) {
         count_threads[i].join();
         free(workers[i]);
     }
+    for (int i = 0; i < TEMPFILE_NUM; i++) {
+        if (close(fds[i]) == -1) {
+            FATAL("FATAL: Close temp file failed");
+        }
+    }
 
+    // output
     std::vector<url_count_t> topk = map->topk();
     for (auto &it : topk) {
         std::cout << it.first << " " << it.second << std::endl;

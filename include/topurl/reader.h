@@ -1,5 +1,5 @@
 /**
- * topurl
+ * topurl - reader.h
  *
  * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
  * SPDX-License-Identifier: MIT
@@ -20,6 +20,8 @@
 
 BEGIN_NAMESPACE_TOPURL
 
+// Reader
+//   Class for reading files
 class Reader {
 public:
     Reader(Buffer &buffer,
@@ -33,26 +35,36 @@ public:
 
     ~Reader();
 
+    // add_file
+    //   add a file to file-list
     void add_file(const std::string& file);
 
-    int read_file();
+    // read_file
+    //   whether to successfully read a file
+    bool read_file();
 
+    // finish
+    //   whether to finish reading
     bool finish() { return pos_ > file_size_; }
 
+    // file_size
+    //   return the reading file size
     std::int64_t file_size() { return file_size_; }
 
 private:
-    int fd_;
-    std::int64_t file_size_;
-    std::int64_t pos_;
-    std::int64_t next_read_;
-    Buffer &buffer_;
-    std::deque<std::string> files_;
-    std::shared_ptr<std::condition_variable> to_workers_;
-    std::shared_ptr<std::condition_variable> from_worker_;
-    std::shared_ptr<std::atomic_bool> stop_;
-    std::mutex mu_;
+    int fd_;                                               // current reading file fd
+    std::int64_t file_size_;                               // current reading file size
+    std::int64_t pos_;                                     // current reading position of the file
+    std::int64_t next_read_;                               // current next read position of the file
+    Buffer &buffer_;                                       // current reading buffer
+    std::deque<std::string> files_;                        // file-list for reading
+    std::shared_ptr<std::condition_variable> to_workers_;  // condition variable sending to workers
+    std::shared_ptr<std::condition_variable> from_worker_; // condition variable from one worker
+    std::shared_ptr<std::atomic_bool> stop_;               // bool variable whether reading stop
+    std::mutex mu_;                                        // mutex for to_workers_
 
+    // init_
+    //   prepare the reader before reading
     void init_(const std::string &fp);
 };
 

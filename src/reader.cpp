@@ -1,5 +1,5 @@
 /**
- * topurl
+ * topurl - reader.cpp
  *
  * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
  * SPDX-License-Identifier: MIT
@@ -20,6 +20,8 @@ Reader::~Reader() {
     }
 }
 
+// Reader::init_
+//   prepare the reader before reading
 void Reader::init_(const std::string &fp) {
     if (fd_ > 0) {
         if (close(fd_) == -1) {
@@ -40,6 +42,8 @@ void Reader::init_(const std::string &fp) {
     }
 }
 
+// Reader::add_file
+//   add a file to file-list
 void Reader::add_file(const std::string& file) {
     if (files_.empty()) {
         stop_->store(false, std::memory_order_release);
@@ -47,9 +51,11 @@ void Reader::add_file(const std::string& file) {
     files_.emplace_back(file);
 }
 
-int Reader::read_file() {
+// Reader::read_file
+//   whether to successfully read a file
+bool Reader::read_file() {
     if (files_.empty()) {
-        return -1;
+        return false;
     }
     std::string &file = files_.front();
     init_(file);
@@ -60,7 +66,7 @@ int Reader::read_file() {
             stop_->store(true, std::memory_order_release);
             to_workers_->notify_all();
         }
-        return 1;
+        return true;
     }
     while (pos_ < file_size_) {
         INFO("Read length %ld", long(next_read_));
@@ -68,7 +74,7 @@ int Reader::read_file() {
             FATAL("Read file failed >> position: %ld, length: %ld <<", long(pos_), long(next_read_));
         }
         pos_ += next_read_ + 1;
-        buffer_.has_read(next_read_ - MAX_URL_LEN);
+        buffer_.read(next_read_ - MAX_URL_LEN);
         next_read_ = (BLOCK_SIZE < file_size_ - pos_ + 1)
                      ? BLOCK_SIZE
                      : file_size_ - pos_ + 1;
@@ -83,7 +89,7 @@ int Reader::read_file() {
         stop_->store(true, std::memory_order_release);
         to_workers_->notify_all();
     }
-    return 1;
+    return true;
 }
 
 END_NAMESPACE_TOPURL

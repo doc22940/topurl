@@ -1,5 +1,5 @@
 /**
- * topurl
+ * topurl - counter.h
  *
  * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
  * SPDX-License-Identifier: MIT
@@ -14,11 +14,15 @@
 
 BEGIN_NAMESPACE_TOPURL
 
+// Counter
+//   Inheritance class from Worker for counting URL and recording in map
 class Counter : public Worker {
 public:
     Counter(int id, Buffer &buffer, std::shared_ptr<Map> map)
             : Worker(id, buffer), map_(std::move(map)) {}
 
+    // work
+    //   override Worker::work
     void work() override;
 
 private:

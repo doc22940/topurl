@@ -1,5 +1,5 @@
 /**
- * topurl
+ * topurl - counter.cpp
  *
  * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
  * SPDX-License-Identifier: MIT
@@ -10,6 +10,8 @@
 
 BEGIN_NAMESPACE_TOPURL
 
+// Counter::work
+//   override Worker::work
 void Counter::work() {
     INFO("Counter%d starts working", id_);
     if (start_ == end_) {
@@ -23,6 +25,7 @@ void Counter::work() {
         pos_split = split(buffer_.buffer() + pos);
         pos += pos_split + 1;
     }
+    // string hash function
     std::hash<std::string> str_hash;
     while (pos < end_) {
         pos_split = split(buffer_.buffer() + pos);
@@ -31,8 +34,9 @@ void Counter::work() {
             ERROR("Get a invaild URL, maybe input file is not compliant. >> %s "
                   "<< Counter%d, position %ld length %ld", url.c_str(), id_, long(pos), long(pos_split));
         } else {
+            // re-hash for workers to counting
             std::size_t hash_id = (str_hash(url) >> std::size_t(2)) % WORKER_NUM;
-            map_->insert_url(hash_id, url);
+            map_->insert(hash_id, url);
         }
         pos += pos_split + 1;
         if ((*(buffer_.buffer() + pos - 1)) == EOF) {

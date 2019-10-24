@@ -1,5 +1,5 @@
 /**
- * topurl
+ * topurl - partitioner.cpp
  *
  * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
  * SPDX-License-Identifier: MIT
@@ -12,6 +12,8 @@
 
 BEGIN_NAMESPACE_TOPURL
 
+// Partitioner::work
+//   override Worker::work
 void Partitioner::work() {
     INFO("Partitioner%d starts", id_);
     if (start_ == end_) {
@@ -25,6 +27,7 @@ void Partitioner::work() {
         pos_split = split(buffer_.buffer() + pos);
         pos += pos_split + 1;
     }
+    // string hash function
     std::hash<std::string> str_hash;
     while (pos < end_) {
         pos_split = split(buffer_.buffer() + pos);
@@ -33,6 +36,7 @@ void Partitioner::work() {
             ERROR("Get a invaild url, maybe input file is not compliant. >> %s "
                   "<< partitioner%d position %ld length %ld", url.c_str(), id_, long(pos), long(pos_split));
         } else {
+            // str_hash % TEMPFILE_NUM -> hash_id
             std::size_t hash_id = str_hash(url) % TEMPFILE_NUM;
             if (write(fds_[hash_id], url.c_str(), url.size()) != url.size()) {
                 ERROR("Partical write or write failed, url >> %s << file_id %d",

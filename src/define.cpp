@@ -1,5 +1,5 @@
 /**
- * topurl
+ * topurl - define.cpp
  *
  * Licensed under the MIT License <https://opensource.org/licenses/MIT>.
  * SPDX-License-Identifier: MIT
@@ -10,6 +10,8 @@
 
 BEGIN_NAMESPACE_TOPURL
 
+// init_arg
+//   init args
 void init_arg(int argc, char **argv) {
     const char *optstring = "f:T:t:b:w:vh";
     int c;
@@ -59,6 +61,8 @@ void init_arg(int argc, char **argv) {
     }
 }
 
+// split
+//   split the string by '\n' and return the split position
 std::int64_t split(const char *ch) {
     std::int64_t pos_split = 0;
     while ((*(ch + pos_split) != '\n') && (*(ch + pos_split) != EOF)) {
